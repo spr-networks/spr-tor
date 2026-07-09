@@ -167,6 +167,9 @@ export default function Plugin() {
       <ListHeader
         title="Tor"
         description="Route traffic through the Tor anonymity network"
+        mark="to"
+        status={established ? 'Circuit ready' : running ? 'Bootstrapping' : 'Stopped'}
+        statusAction={established ? 'success' : running ? 'warning' : 'muted'}
       >
         <Button size="sm" variant="outline" onPress={newIdentity} isDisabled={!running}>
           <ButtonText>New Identity</ButtonText>
