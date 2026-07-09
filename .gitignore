@@ -4,3 +4,4 @@ state/
 .spr-setup-done
 node_modules
 frontend/build
+code/tor_plugin
