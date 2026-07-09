@@ -1,0 +1,32 @@
+version: '3.4'
+
+x-labels:
+  &default-labels
+  # constant (not $CI) so digests are reproducible across CI/local
+  org.supernetworks.ci: "true"
+  org.supernetworks.version: ${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:-}
+
+services:
+  spr-tor:
+    container_name: spr-tor
+    image: ghcr.io/spr-networks/spr-tor:${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:-}
+    build:
+      context: "${BUILDCTX:-.}"
+      labels: *default-labels
+    security_opt:
+      - no-new-privileges:true
+    # Tor runs as an outbound-only client: no relay, no tun device, no
+    # firewall manipulation -> no extra capabilities, no devices, no ports.
+    networks:
+      tornet:
+    volumes:
+      - "${SUPERDIR}./state/plugins/spr-tor:/state/plugins/spr-tor"
+      - "${SUPERDIR}./configs/base/config.sh:/configs/base/config.sh:ro"
+      - "${SUPERDIR}./configs/plugins/spr-tor:/configs/spr-tor"
+
+# Note, if updating the bridge name, also update gSPRTorInterface in
+# code/tor_plugin.go and NetworkCapabilities.Interface in plugin.json.
+networks:
+  tornet:
+    driver_opts:
+      com.docker.network.bridge.name: spr-tor

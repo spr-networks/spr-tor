@@ -1,0 +1,15 @@
+{
+  "Name": "spr-tor",
+  "ComposeFilePath": "plugins/user/spr-tor/docker-compose.yml",
+  "UnixPath": "/state/plugins/spr-tor/socket",
+  "URI": "spr-tor",
+  "HasUI": true,
+  "SandboxedUI": false,
+  "InstallTokenPath": "/configs/plugins/spr-tor/api-token",
+  "NetworkCapabilities": {
+    "Interface": "spr-tor",
+    "Policies": ["wan", "dns"],
+    "Groups": ["tor"]
+  },
+  "Enabled": true
+}
