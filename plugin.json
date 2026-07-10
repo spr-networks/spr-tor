@@ -4,6 +4,8 @@
   "UnixPath": "/state/plugins/spr-tor/socket",
   "URI": "spr-tor",
   "HasUI": true,
+  "Icon": "Lock",
+  "HasTopology": true,
   "SandboxedUI": false,
   "InstallTokenPath": "/configs/plugins/spr-tor/api-token",
   "NetworkCapabilities": {

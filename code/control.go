@@ -173,10 +173,18 @@ func parseBootstrapPhase(s string) (progress int, summary string) {
 	return
 }
 
+// CircuitHop is one relay in a circuit path, as tor reports it:
+// "$<40-hex-fingerprint>~<nickname>" (or "=<nickname>" for Named relays).
+type CircuitHop struct {
+	Fingerprint string
+	Nickname    string
+}
+
 type Circuit struct {
 	ID          string
 	Status      string
 	Path        []string
+	Hops        []CircuitHop
 	BuildFlags  []string
 	Purpose     string
 	TimeCreated string
@@ -197,15 +205,23 @@ func parseCircuitStatus(data string) []Circuit {
 		if len(fields) < 2 {
 			continue
 		}
-		c := Circuit{ID: fields[0], Status: fields[1], Path: []string{}}
+		c := Circuit{ID: fields[0], Status: fields[1], Path: []string{}, Hops: []CircuitHop{}}
 		for _, f := range fields[2:] {
 			switch {
 			case strings.HasPrefix(f, "$"):
 				for _, hop := range strings.Split(f, ",") {
-					if _, nick, ok := strings.Cut(hop, "~"); ok {
-						c.Path = append(c.Path, nick)
+					raw := strings.TrimPrefix(hop, "$")
+					h := CircuitHop{Fingerprint: raw}
+					if fp, nick, ok := strings.Cut(raw, "~"); ok {
+						h.Fingerprint, h.Nickname = fp, nick
+					} else if fp, nick, ok := strings.Cut(raw, "="); ok {
+						h.Fingerprint, h.Nickname = fp, nick
+					}
+					c.Hops = append(c.Hops, h)
+					if h.Nickname != "" {
+						c.Path = append(c.Path, h.Nickname)
 					} else {
-						c.Path = append(c.Path, strings.TrimPrefix(hop, "$"))
+						c.Path = append(c.Path, h.Fingerprint)
 					}
 				}
 			case strings.HasPrefix(f, "BUILD_FLAGS="):

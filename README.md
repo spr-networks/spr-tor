@@ -27,6 +27,8 @@ progress and circuit state, a config form, a circuits list, and a New Identity b
 - Exit-relay country selection (`ExitNodes {cc}` + `StrictNodes`)
 - Bridge support: vanilla and obfs4 bridges (obfs4proxy included), strictly format-validated
 - New Identity (NEWNYM) button and circuit list in the UI
+- Contributes to SPR's topology view (`HasTopology`): built circuits are shown as relay
+  chains (guard → middle → exit) hanging off the router node
 - Client-only hardening baked in: no relay, no exit, no ORPort/DirPort, control channel on a
   unix socket with cookie auth only (no TCP ControlPort)
 
@@ -62,6 +64,7 @@ All endpoints are served over the plugin's unix socket and proxied by the SPR AP
 | PUT    | `/config`   | Validate + save configuration, regenerate torrc, reload tor       |
 | POST   | `/newnym`   | Signal NEWNYM (new identity / fresh circuits)                     |
 | GET    | `/circuits` | Open circuits: id, status, relay path, purpose, created time      |
+| GET    | `/topology` | Live circuit graph (`{Nodes, Edges}`) for SPR's topology view: a root anchor plus a `root → guard → middle → exit` relay chain per built circuit; root-only when tor is down |
 
 ## Configuration reference
 

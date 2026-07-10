@@ -266,6 +266,7 @@ func main() {
 	mux.HandleFunc("PUT /config", handlePutConfig)
 	mux.HandleFunc("POST /newnym", handleNewNym)
 	mux.HandleFunc("GET /circuits", handleGetCircuits)
+	mux.HandleFunc("GET /topology", handleGetTopology)
 	mux.Handle("/", spaHandler{staticPath: "/ui", indexPath: "index.html"})
 
 	os.Remove(UNIX_PLUGIN_LISTENER)
