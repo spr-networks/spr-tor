@@ -25,7 +25,9 @@ progress and circuit state, a config form, a circuits list, and a New Identity b
 
 - Tor SOCKS5 proxy for SPR devices in the `tor` group (container-IP:9050)
 - Optional transparent proxy port (9040) and DNS-over-Tor port (9053), off by default,
-  for routing devices/groups through Tor
+  for routing devices/groups through Tor. When `TransPortEnabled` is on, the plugin
+  installs nft REDIRECT rules and advertises itself as a routeable sink in the SPR
+  topology, so device traffic policy-routed to the container is transparently proxied.
 - Exit-relay country selection (`ExitNodes {cc}` + `StrictNodes`)
 - Bridge support: vanilla and obfs4 bridges (obfs4proxy included), strictly format-validated
 - New Identity (NEWNYM) button and circuit list in the UI
@@ -98,8 +100,10 @@ allow-listed `k=v` transport arguments (transports: `obfs4`).
   makes outbound connections (`wan` + `dns` policies).
 - **Control channel** is `ControlSocket` (unix) with `CookieAuthentication 1`, `ControlPort 0`
   (never TCP). Socket and cookie live in `/run/tor` inside the container, not on a host mount.
-- **No extra privileges.** No `cap_add`, no devices, no tun, `no-new-privileges:true`;
-  tor itself drops from root to the `debian-tor` user at startup (torrc `User`).
+- **Minimal privileges.** `no-new-privileges:true`, no devices, no tun; tor itself drops
+  from root to the `debian-tor` user at startup (torrc `User`). The only capability is
+  `NET_ADMIN`, used solely to install the transparent-proxy nft REDIRECT rules when
+  `TransPortEnabled` is set — with it off, no firewall rules are added.
 - **Mounts** are the minimal SPR plugin set: plugin state (rw), plugin config (rw),
   `configs/base/config.sh` (ro). The backend does not call the SPR API in this version
   (`ScopedPaths` omitted).

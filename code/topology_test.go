@@ -124,3 +124,23 @@ func TestBuildTorTopologyFingerprintOnlyHop(t *testing.T) {
 		t.Errorf("nickname-less relay should display abbreviated fingerprint, got %q", n.Name)
 	}
 }
+
+func TestTorSinkGatedOnTransPort(t *testing.T) {
+	// TransPort off -> no sink (routed traffic would blackhole)
+	if s := torSink(Config{TransPortEnabled: false}, "172.19.0.2", true); s != nil {
+		t.Errorf("sink must not be advertised when TransPort is disabled, got %+v", s)
+	}
+
+	// TransPort on -> one sink on the bridge iface, tied to running state
+	s := torSink(Config{TransPortEnabled: true}, "172.19.0.2", true)
+	if len(s) != 1 {
+		t.Fatalf("expected 1 sink, got %+v", s)
+	}
+	if s[0].ID != "tor" || s[0].Iface != gSPRTorInterface || s[0].IP != "172.19.0.2" || !s[0].Online {
+		t.Errorf("bad sink advertisement: %+v", s[0])
+	}
+
+	if s := torSink(Config{TransPortEnabled: true}, "172.19.0.2", false); s[0].Online {
+		t.Errorf("sink should be offline when tor is not running")
+	}
+}

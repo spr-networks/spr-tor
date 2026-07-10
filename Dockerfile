@@ -57,7 +57,8 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends \
       "tor=${TOR_PKG_VERSION}" \
       "tor-geoipdb=${TOR_PKG_VERSION}" \
-      "obfs4proxy=${OBFS4_PKG_VERSION}"; \
+      "obfs4proxy=${OBFS4_PKG_VERSION}" \
+      nftables; \
     rm -rf /var/lib/apt/lists/* /var/log/* /var/cache/ldconfig/aux-cache
 COPY scripts /scripts/
 COPY --from=builder /tor_plugin /

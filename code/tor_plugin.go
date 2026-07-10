@@ -180,13 +180,15 @@ func handlePutConfig(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := writeTorrc(&cfg, getContainerIP()); err != nil {
+	ip := getContainerIP()
+	if err := writeTorrc(&cfg, ip); err != nil {
 		http.Error(w, err.Error(), 500)
 		return
 	}
 	if err := reloadTor(); err != nil {
 		log.Println("[-] tor reload failed:", err)
 	}
+	syncTransProxy(&cfg, ip)
 
 	httpJSON(w, cfg)
 }
@@ -259,6 +261,7 @@ func main() {
 	} else {
 		go superviseTor()
 	}
+	syncTransProxy(&cfg, getContainerIP())
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /status", handleGetStatus)

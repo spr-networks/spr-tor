@@ -24,9 +24,34 @@ type TopoEdge struct {
 	Kind  string
 }
 
+type TopoSink struct {
+	ID     string
+	Name   string
+	Iface  string
+	IP     string `json:",omitempty"`
+	Online bool
+}
+
 type Topology struct {
 	Nodes []TopoNode
 	Edges []TopoEdge
+	Sinks []TopoSink `json:",omitempty"`
+}
+
+// torSink advertises this container as a routeable transparent-proxy sink,
+// but only when the TransPort is enabled: with it off there is no redirect
+// path, so routed traffic would blackhole. containerIP is the "via" address.
+func torSink(cfg Config, containerIP string, running bool) []TopoSink {
+	if !cfg.TransPortEnabled {
+		return nil
+	}
+	return []TopoSink{{
+		ID:     "tor",
+		Name:   "Tor (transparent)",
+		Iface:  gSPRTorInterface,
+		IP:     containerIP,
+		Online: running,
+	}}
 }
 
 // shortFP abbreviates a 40-hex relay fingerprint for display when tor did
@@ -116,13 +141,17 @@ func buildTorTopology(circuits []Circuit, exitCountry string) Topology {
 // topology view still shows the plugin, offline.
 func handleGetTopology(w http.ResponseWriter, r *http.Request) {
 	Configmtx.RLock()
-	exitCountry := gConfig.ExitCountry
+	cfg := gConfig
 	Configmtx.RUnlock()
 
 	circuits := []Circuit{}
+	running := false
 	if info, err := gControl.GetInfo("circuit-status"); err == nil {
 		circuits = parseCircuitStatus(info["circuit-status"])
+		running = true
 	}
 
-	httpJSON(w, buildTorTopology(circuits, exitCountry))
+	topo := buildTorTopology(circuits, cfg.ExitCountry)
+	topo.Sinks = torSink(cfg, getContainerIP(), running)
+	httpJSON(w, topo)
 }

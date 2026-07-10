@@ -15,8 +15,15 @@ services:
       labels: *default-labels
     security_opt:
       - no-new-privileges:true
-    # Tor runs as an outbound-only client: no relay, no tun device, no
-    # firewall manipulation -> no extra capabilities, no devices, no ports.
+    # Tor is an outbound-only client (no relay, no tun device). NET_ADMIN is
+    # needed only so the plugin can install the transparent-proxy nft REDIRECT
+    # rules when TransPort is enabled; with TransPort off no rules are added.
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      # REDIRECT sends transit traffic to tor's TransPort on the container IP;
+      # route_localnet keeps the rewritten packets deliverable.
+      - net.ipv4.conf.all.route_localnet=1
     networks:
       tornet:
     volumes:
