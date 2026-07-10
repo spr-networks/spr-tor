@@ -28,5 +28,6 @@ services:
 # code/tor_plugin.go and NetworkCapabilities.Interface in plugin.json.
 networks:
   tornet:
+    name: spr-tor
     driver_opts:
       com.docker.network.bridge.name: spr-tor
