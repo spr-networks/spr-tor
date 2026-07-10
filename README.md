@@ -1,5 +1,7 @@
 # spr-tor
 
+<img width="850" alt="spr-tor UI preview" src="docs/screenshot.png" />
+
 A [Tor](https://www.torproject.org/) client plugin for [SPR](https://github.com/spr-networks/super)
 (Secure Programmable Router). It runs the `tor` daemon as an **outbound-only client** in an
 isolated container and exposes a SOCKS5 proxy — plus optional transparent-proxy and
