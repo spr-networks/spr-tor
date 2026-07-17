@@ -16,13 +16,13 @@ import (
 	"time"
 )
 
-var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/state/plugins/spr-tor/socket"
+var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/run/spr-krun-plugin/spr-tor.sock"
 
 var TorBinary = "/usr/bin/tor"
 
 // the name of the interface from the docker network (see docker-compose.yml)
 // which is visible outside of the container.
-var gSPRTorInterface = "spr-tor"
+var gSPRTorInterface = "ktor0"
 
 var gControl = &ControlClient{
 	SocketPath: TorControlSocket,
