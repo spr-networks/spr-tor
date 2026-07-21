@@ -31,12 +31,12 @@ if [ ! -f "$SUPERDIR/configs/plugins/spr-tor/config.json" ]; then
 fi
 
 KRUN_MAC="02:53:50:52:4b:10"
-KRUN_TAP="ktor0"
+PLUGIN_INTERFACE="spr-tor"
 curl --fail-with-body --silent --show-error "http://127.0.0.1/device?identity=${KRUN_MAC}" \
   -H "Authorization: Bearer ${SPR_API_TOKEN}" -H "Content-Type: application/json" \
   -X PUT --data-raw "{\"MAC\":\"${KRUN_MAC}\",\"Name\":\"spr-tor\",\"Policies\":[\"wan\",\"dns\"],\"Groups\":[\"tor\"]}" >/dev/null
-if ! sudo nft get element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MAC} }" >/dev/null 2>&1; then
-  sudo nft add element inet filter dhcp_access "{ \"${KRUN_TAP}\" . ${KRUN_MAC} : accept }"
+if ! sudo nft get element inet filter dhcp_access "{ \"${PLUGIN_INTERFACE}\" . ${KRUN_MAC} }" >/dev/null 2>&1; then
+  sudo nft add element inet filter dhcp_access "{ \"${PLUGIN_INTERFACE}\" . ${KRUN_MAC} : accept }"
 fi
 
 docker compose -f docker-compose-kvm.yml build
@@ -56,6 +56,6 @@ API=127.0.0.1
 curl "http://${API}/firewall/custom_interface" \
 -H "Authorization: Bearer ${SPR_API_TOKEN}" \
 -X 'PUT' \
---data-raw "{\"SrcIP\":\"${CONTAINER_IP}\",\"Interface\":\"${KRUN_TAP}\",\"Policies\":[\"wan\",\"dns\"],\"Groups\":[\"tor\"]}"
+--data-raw "{\"SrcIP\":\"${CONTAINER_IP}\",\"Interface\":\"${PLUGIN_INTERFACE}\",\"Policies\":[\"wan\",\"dns\"],\"Groups\":[\"tor\"]}"
 
 docker compose -f docker-compose-kvm.yml restart

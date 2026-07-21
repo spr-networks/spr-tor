@@ -9,7 +9,7 @@
   "SandboxedUI": false,
   "InstallTokenPath": "/configs/plugins/spr-tor/api-token",
   "NetworkCapabilities": {
-    "Interface": "ktor0",
+    "Interface": "spr-tor",
     "DeviceMAC": "02:53:50:52:4b:10",
     "Policies": ["wan", "dns"],
     "Groups": ["tor"]

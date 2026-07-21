@@ -22,7 +22,7 @@ var TorBinary = "/usr/bin/tor"
 
 // the name of the interface from the docker network (see docker-compose.yml)
 // which is visible outside of the container.
-var gSPRTorInterface = "ktor0"
+var gSPRTorInterface = "spr-tor"
 
 var gControl = &ControlClient{
 	SocketPath: TorControlSocket,

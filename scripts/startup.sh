@@ -6,8 +6,8 @@ if [ -f /configs/spr-tor/config.sh ]; then
 fi
 set +a
 
-# Docker cannot apply network sysctls to a host-networked OCI runtime. This
-# write occurs inside the krun guest kernel, where the setting belongs.
+# OCI network sysctls affect the VMM namespace, not the guest. Apply this
+# setting inside the krun guest kernel, where it belongs.
 printf '1' > /proc/sys/net/ipv4/conf/all/route_localnet
 
 # Tor drops privileges to debian-tor (torrc `User`); its data dir must be
