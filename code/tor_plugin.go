@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/state/plugins/spr-tor/socket"
+var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/run/spr-krun-plugin/spr-tor.sock"
 
 var TorBinary = "/usr/bin/tor"
 

@@ -6,6 +6,10 @@ if [ -f /configs/spr-tor/config.sh ]; then
 fi
 set +a
 
+# OCI network sysctls affect the VMM namespace, not the guest. Apply this
+# setting inside the krun guest kernel, where it belongs.
+printf '1' > /proc/sys/net/ipv4/conf/all/route_localnet
+
 # Tor drops privileges to debian-tor (torrc `User`); its data dir must be
 # owned by that user and kept private. The control socket + auth cookie live
 # in /run/tor (container-local tmpfs-ish path, never on a host mount).
