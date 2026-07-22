@@ -92,7 +92,7 @@ allow-listed `k=v` transport arguments (transports: `obfs4`).
 ## Security model
 
 - **No published host ports.** `ports:` is absent; the only host-facing endpoint is the
-  plugin unix socket `/state/plugins/spr-tor/socket`, which SPR proxies and authenticates.
+  plugin unix socket `/state/plugins/spr-tor/socket.sock`, which SPR proxies and authenticates.
 - **Proxy ports bind to the container IP** on the plugin's dedicated bridge (`spr-tor`).
   Reachability is granted through SPR policies/groups: devices must be in the `tor` group.
 - **Client only.** The generated torrc pins `ClientOnly 1`, `ORPort 0`, `DirPort 0`,

@@ -1,7 +1,7 @@
 {
   "Name": "spr-tor",
   "Runtime": "kvm",
-  "UnixPath": "/state/plugins/spr-tor/socket",
+  "UnixPath": "/state/plugins/spr-tor/socket.sock",
   "URI": "spr-tor",
   "HasUI": true,
   "Icon": "Lock",
