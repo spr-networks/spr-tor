@@ -7,7 +7,6 @@
   "Icon": "Lock",
   "HasTopology": true,
   "SandboxedUI": false,
-  "InstallTokenPath": "/configs/plugins/spr-tor/api-token",
   "NetworkCapabilities": {
     "Interface": "spr-tor",
     "Policies": ["wan", "dns"],
