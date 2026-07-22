@@ -6,7 +6,7 @@
   "HasUI": true,
   "Icon": "Lock",
   "HasTopology": true,
-  "SandboxedUI": false,
+  "SandboxedUI": true,
   "NetworkCapabilities": {
     "Interface": "spr-tor",
     "DeviceMAC": "02:53:50:52:4b:10",
