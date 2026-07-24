@@ -3,7 +3,7 @@ services:
     extends:
       file: docker-compose.yml
       service: spr-tor
-    image: ghcr.io/spr-networks/spr-tor:${RELEASE_VERSION:-latest}${RELEASE_CHANNEL:--krun}
+    image: ghcr.io/spr-networks/spr-tor:latest
     runtime: ${SPR_KRUN_RUNTIME:-spr-krun}
     sysctls: !reset []
     annotations:
