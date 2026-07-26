@@ -4,6 +4,7 @@ services:
       file: docker-compose.yml
       service: spr-tor
     image: ghcr.io/spr-networks/spr-tor:latest
+    build: !reset null
     runtime: ${SPR_KRUN_RUNTIME:-spr-krun}
     sysctls: !reset []
     annotations:
@@ -28,3 +29,4 @@ networks:
     name: spr-tor
     driver_opts:
       com.docker.network.bridge.name: spr-tor
+      com.docker.network.bridge.inhibit_ipv4: "true"
