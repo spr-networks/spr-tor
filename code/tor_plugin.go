@@ -16,7 +16,14 @@ import (
 	"time"
 )
 
-var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/run/spr-krun-plugin/spr-tor.sock"
+var UNIX_PLUGIN_LISTENER = TEST_PREFIX + "/state/plugins/spr-tor/socket.sock"
+
+func pluginSocketPath() string {
+	if path := os.Getenv("SPR_KRUN_PLUGIN_SOCKET"); path != "" {
+		return path
+	}
+	return UNIX_PLUGIN_LISTENER
+}
 
 var TorBinary = "/usr/bin/tor"
 
@@ -272,18 +279,21 @@ func main() {
 	mux.HandleFunc("GET /topology", handleGetTopology)
 	mux.Handle("/", spaHandler{staticPath: "/ui", indexPath: "index.html"})
 
-	os.Remove(UNIX_PLUGIN_LISTENER)
-	os.MkdirAll(filepath.Dir(UNIX_PLUGIN_LISTENER), 0755)
-	listener, err := net.Listen("unix", UNIX_PLUGIN_LISTENER)
+	socketPath := pluginSocketPath()
+	os.Remove(socketPath)
+	if err := os.MkdirAll(filepath.Dir(socketPath), 0755); err != nil {
+		panic(err)
+	}
+	listener, err := net.Listen("unix", socketPath)
 	if err != nil {
 		panic(err)
 	}
-	if err := os.Chmod(UNIX_PLUGIN_LISTENER, 0770); err != nil {
+	if err := os.Chmod(socketPath, 0770); err != nil {
 		log.Println("[-] chmod socket:", err)
 	}
 
 	server := http.Server{Handler: logRequest(mux)}
-	log.Println("[+] spr-tor plugin listening on", UNIX_PLUGIN_LISTENER)
+	log.Println("[+] spr-tor plugin listening on", socketPath)
 	if err := server.Serve(listener); err != nil {
 		log.Fatal(err)
 	}
