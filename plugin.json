@@ -10,6 +10,7 @@
   "NetworkCapabilities": {
     "Interface": "spr-tor",
     "DeviceMAC": "02:53:50:52:4b:10",
+    "TransparentSink": true,
     "Policies": ["wan", "dns"],
     "Groups": ["tor"]
   },
